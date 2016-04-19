@@ -195,5 +195,4 @@ And we get `198.120.50.6`, easy!
 == More
 If you wan to learn about IPv6 and subnetting checkout these articles:
 
-* TBA
-* TBA
+* http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html[Converting IPv6 to Binary]
