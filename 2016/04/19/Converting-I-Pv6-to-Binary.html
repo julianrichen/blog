@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Converting IPv6 to Binary</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//blog.richen.io/themes/Casper/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//blog.richen.io/themes/Casper/assets/css/screen.css?v=1.0.0" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html" />
+    
+    <meta property="og:site_name" content="Julian Richen" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Converting IPv6 to Binary" />
+    <meta property="og:description" content="When the &quot;internet&quot; was being developed we started with IPv4 because the idea that millions of devices would be connected to the web didn&amp;#8217;t seem possible. Within a relatively short time the number of cellphones and IoT (Internet..." />
+    <meta property="og:url" content="http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html" />
+    <meta property="article:published_time" content="2016-04-19T04:00:00.000Z" />
+    <meta property="article:modified_time" content="2016-04-19T21:32:45.830Z" />
+    <meta property="article:tag" content="Networking" />
+    <meta property="article:tag" content="IPv6" />
+    <meta property="article:tag" content="Cisco" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Converting IPv6 to Binary" />
+    <meta name="twitter:description" content="When the &quot;internet&quot; was being developed we started with IPv4 because the idea that millions of devices would be connected to the web didn&amp;#8217;t seem possible. Within a relatively short time the number of cellphones and IoT (Internet..." />
+    <meta name="twitter:url" content="http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Julian Richen",
+    "author": {
+        "@type": "Person",
+        "name": "Julian Richen",
+        "image": "https://avatars.githubusercontent.com/u/58045?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": "http://richen.io"
+    },
+    "headline": "Converting IPv6 to Binary",
+    "url": "http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html",
+    "datePublished": "2016-04-19T04:00:00.000Z",
+    "dateModified": "2016-04-19T21:32:45.830Z",
+    "keywords": "Networking,  IPv6,  Cisco",
+    "description": "When the &quot;internet&quot; was being developed we started with IPv4 because the idea that millions of devices would be connected to the web didn&amp;#8217;t seem possible. Within a relatively short time the number of cellphones and IoT (Internet..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="Julian Richen" href="http://blog.richen.io/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template tag-Networking tag-I-Pv6 tag-Cisco">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="http://blog.richen.io">Home</a>
+        <!-- <a class="subscribe-button icon-feed" href="http://blog.richen.io/rss/">Subscribe</a> -->
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post tag-Networking tag-I-Pv6 tag-Cisco">
+
+        <header class="post-header">
+            <h1 class="post-title">Converting IPv6 to Binary</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2016-04-19">19 April 2016</time>  on <a href="http://blog.richen.io/tag/Networking">Networking</a>, <a href="http://blog.richen.io/tag/I-Pv6"> IPv6</a>, <a href="http://blog.richen.io/tag/Cisco"> Cisco</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>When the "internet" was being developed we started with IPv4 because the idea that millions of devices would be connected to the web didn&#8217;t seem possible. Within a relatively short time the number of cellphones and IoT (Internet of Things) has exploded. In many nations it very hard to find an individual who doesn&#8217;t have some kind of internet connected device. Each of theses devices are consuming a IP address. IPv4 only has 4,294,967,296 addresses available and this is a problem. With more and more people owning multiple internet ready devices the number of IPv4 addresses is shrinking, in fact it already gone. We used the last available addresses long ago, but thanks to subnetting we have been holding on to a thin wire by creating subnets. Each of theses subets can uses already used addresses because we convert and mask IP&#8217;s from network to network. While subnetting works it creates extra steps and bogus down networks with all the network translations. It&#8217;s for this reason that IPv6 was created. It&#8217;s design to be a replacement for IPv4 with nearly 3.4 x 10^38 addresses, that&#8217;s 7.9 x 10^28 more address than IPv4. IPv6 was designed from the beginning to account for growth in network and also removes the need for subnetting. While you never should "really" need to subnet IPv6, you might. So for this reason it&#8217;s an important skill to learn. The transition has been slow but IPv6 will eventually replace IPv4. It&#8217;s good to get your understanding of IPv6 down now as you will likely be dealing with it soon if you working in networking.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_s_different_from_ipv4">What&#8217;s different from IPv4</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lets get a few things square away, first IPv6 looks different from IPv4. You should be familiar with an IPv4 address and it&#8217;s octets:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> 198   .   120   .   50    .    6
+-------   -------   -------   -------
+Octet 1   Octet 2   Octet 3   Octet 4</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>IPv6 on the other hand looks like so and has "hextects". Each hextect is separated by a <code>:</code> instead of a <code>.</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can short-handed the above address by removing any <strong>continues</strong> hextets with <code>0000</code>, these are replaced by <code>::</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>2001:0db8:85a3::8a2e:0370:7334
+              ^^
+     As you can see here</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Take note if you had an address like so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>2001:0000:85a3:0000:0000:8a2e:0370:7334</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You could not short-hand two hextets like so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>2001::85a3::8a2e:0370:7334
+    ^^    ^^
+      Bad!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can only short-hand one segment of <code>0000</code>, normally the longer of the two.</p>
+</div>
+<div class="paragraph">
+<p>The above addresses are using hexdeciaml or base-16. The only difference from decimal and hex is that after 1-9 you start counting with numbers. I&#8217;ll explain more.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_understanding_hex">Understanding hex</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To help explain hex I have included a table below with hex, decimal and binary values. Notice that after 1-9 instead of counting <code>10</code>, <code>11</code>, <code>12</code>, etc.. like decimal hex start using <code>A</code>, <code>B</code>, <code>C</code> and so on to <code>F</code>. We don&#8217;t need to count farther than <code>F</code> for IPv6 so if your interested in learning more about hex I encourage you to find another article. I should also point out that the table does a lot of the work for us when converting IPv6 to binary. I&#8217;ll explain converting hex to binary below but using the table when converting a full IPv6 addresses to binary will save you time instead of finding the value for each hex in each hextect.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hexadecimal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Decimal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binary</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0001</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0010</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0011</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0100</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0101</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0110</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0111</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1001</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1010</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1011</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1100</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1101</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1110</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">F</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1111</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_converting_to_binary">Converting to binary</h3>
+<div class="paragraph">
+<p>If you are wondering how to get the binary value we simply uses the same method for converting IPv4 but only up to 4 bits for each integer/character. I cover this in more detail in my [Converting IPv4 to Binary](<a href="http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html" class="bare">http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html</a>) article. Let&#8217;s make a binary cheat sheet. Below is used for an IPv4 octet:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> x   x   x   x   x   x   x   x
+--- --- --- --- --- --- --- ---
+2^7 2^6 2^5 2^4 2^3 2^2 2^1 2^0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since we only need the 2^0 to 2^3 let&#8217;s remove 2^4 - 2^7:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> x   x   x   x
+--- --- --- ---
+2^3 2^2 2^1 2^0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we calculate those values out we get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> x   x   x   x
+--- --- --- ---
+ 8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now that we have our cheat sheet let&#8217;s say we want to get the binary value of hex <code>A</code>. First <code>A</code> is <code>10</code> in decimal because after <code>9</code> you start counting with letters.</p>
+</div>
+<div class="paragraph">
+<p>Just like calculating IPv4 we take the largest value from binary bit that can subtracted from <code>10</code>, in this case <code>8</code> works so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>  10
+-  8
+-----
+   2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We fill in <code>1</code> for the <code>8</code> bit and put a <code>0</code> for <code>4</code> because we can&#8217;t subtract <code>4</code> from <code>2</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> 1   0   x   x
+--- --- --- ---
+ 8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then repeat for <code>2</code> because we can subtract <code>2</code> from <code>2</code> and still get a positive or zero number:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>   2
+-  2
+-----
+   0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We fill in <code>1</code> for the <code>2</code> bit and because we are at <code>0</code> from doing <code>2 - 2</code> any remaining values are <code>0</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> 1   0   1   0
+--- --- --- ---
+ 8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and we get <code>1010</code> for the binary value of <code>A</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_converting_hex_to_binary">Converting hex to binary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Converting hex to binary is the exact same procedure as converting IPv4 to binary and the method shown above. However, instead of 8 binary bits, we are dealing with 16. Four bits for each integers/character and because 4 integers/characters make-up a hextect we have 16 bits total. Here is a breakdown.</p>
+</div>
+<div class="paragraph">
+<p>If we have an IPv6 address like so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each section separate by a <code>:</code> is the equivalent to an octet in IPv4 talk or as we already mentioned it&#8217;s called a "hextect". Lets solve for <code>0db8</code> because it contains a mix of numbers and letters making it good practice. Lets recreate our octet binary cheat sheet but for hextets instead:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> x   x   x   x  |  x   x   x   x  |  x   x   x   x  |  x   x   x   x
+--- --- --- --- | --- --- --- --- | --- --- --- --- | --- --- --- ---
+ 8   4   2   1  |  8   4   2   1  |  8   4   2   1  |  8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I separate each integer/character by a <code>|</code>. Here is visual diagram to make it a bit more clear.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>                                 0db8
+                                  |
+       0                 d        |        b                 8
+       +-----------------+--------+--------+-----------------+
+       |                 |                 |                 |
+ x   x   x   x  |  x   x   x   x  |  x   x   x   x  |  x   x   x   x
+--- --- --- --- | --- --- --- --- | --- --- --- --- | --- --- --- ---
+ 8   4   2   1  |  8   4   2   1  |  8   4   2   1  |  8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And now we simply convert to binary for each digit or character. If you don&#8217;t understand refer to the "Converting to binary" section again.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>                                 0db8
+                                  |
+       0                 d        |        b                 8
+       +-----------------+--------+--------+-----------------+
+       |                 |                 |                 |
+ 0   0   0   0  |  1   1   0   1  |  1   0   1   1  |  1   0   0   0
+--- --- --- --- | --- --- --- --- | --- --- --- --- | --- --- --- ---
+ 8   4   2   1  |  8   4   2   1  |  8   4   2   1  |  8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now repeat for each hextect! The final outcome would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>00100000000000010000110110111000100001011010001100000000000000000000000000000000100010100010111000000011011100000111001100110100</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You could also convert to dotted decimal but that&#8217;s another tutorial:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>32.1.13.184.133.163.0.0.0.0.138.46.3.112.115.52</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Obviously this is a bit more intensive then IPv4 but you&#8217;ll need to learn it regardless. Best of luck converting in the field.</p>
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="" style="background-image: url(https://avatars.githubusercontent.com/u/58045?v=3)"><span class="hidden">Julian Richen's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="">Julian Richen</a></h4>
+
+                    <p>Read <a href="">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    <span class="author-link icon-link"><a href="http://richen.io">http://richen.io</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Converting%20IPv6%20to%20Binary&amp;url=http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="http://blog.richen.io">Julian Richen</a> &copy; 2016</section>
+        <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+    <script type="text/javascript" src="//blog.richen.io/themes/Casper/assets/js/jquery.fitvids.js?v=1.0.0"></script>
+    <script type="text/javascript" src="//blog.richen.io/themes/Casper/assets/js/index.js?v=1.0.0"></script>
+
+</body>
+</html>
