@@ -1,10 +1,1 @@
-{
-  "meta": {
-    "username": "julianrichen",
-    "repositoryName": "blog",
-    "branch": "gh-pages"
-  },
-  "theme": {
-    "name": "Casper"
-  }
-}
+{"meta":{"username":"julianrichen","repositoryName":"blog","branch":"gh-pages","cname":"blog.richen.io"},"site":{"url":"http://blog.richen.io"},"socialnetwork":{},"theme":{"name":"Casper","url":"//julianrichen.github.io/blog/themes/Casper"}}
