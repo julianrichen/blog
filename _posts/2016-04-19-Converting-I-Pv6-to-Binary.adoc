@@ -1,0 +1,231 @@
+= Converting IPv6 to Binary
+:published_at: 2016-04-19
+:hp-tags: Networking, IPv6, Cisco
+
+When the "internet" was being developed we started with IPv4 because the idea that millions of devices would be connected to the web didn't seem possible. Within a relatively short time the number of cellphones and IoT (Internet of Things) has exploded. In many nations it very hard to find an individual who doesn't have some kind of internet connected device. Each of theses devices are consuming a IP address. IPv4 only has 4,294,967,296 addresses available and this is a problem. With more and more people owning multiple internet ready devices the number of IPv4 addresses is shrinking, in fact it already gone. We used the last available addresses long ago, but thanks to subnetting we have been holding on to a thin wire by creating subnets. Each of theses subets can uses already used addresses because we convert and mask IP's from network to network. While subnetting works it creates extra steps and bogus down networks with all the network translations. It's for this reason that IPv6 was created. It's design to be a replacement for IPv4 with nearly 3.4 x 10^38 addresses, that's 7.9 x 10^28 more address than IPv4. IPv6 was designed from the beginning to account for growth in network and also removes the need for subnetting. While you never should "really" need to subnet IPv6, you might. So for this reason it's an important skill to learn. The transition has been slow but IPv6 will eventually replace IPv4. It's good to get your understanding of IPv6 down now as you will likely be dealing with it soon if you working in networking.
+
+== What's different from IPv4
+Lets get a few things square away, first IPv6 looks different from IPv4. You should be familiar with an IPv4 address and it's octets:
+```
+ 198   .   120   .   50    .    6
+-------   -------   -------   -------
+Octet 1   Octet 2   Octet 3   Octet 4
+```
+
+IPv6 on the other hand looks like so and has "hextects". Each hextect is separated by a `:` instead of a `.`.
+```
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+```
+
+You can short-handed the above address by removing any *continues* hextets with `0000`, these are replaced by `::`.
+```
+2001:0db8:85a3::8a2e:0370:7334
+              ^^
+     As you can see here
+
+```
+
+Take note if you had an address like so:
+```
+2001:0000:85a3:0000:0000:8a2e:0370:7334
+```
+
+You could not short-hand two hextets like so:
+```
+2001::85a3::8a2e:0370:7334
+    ^^    ^^
+      Bad!
+```
+
+You can only short-hand one segment of `0000`, normally the longer of the two.
+
+The above addresses are using hexdeciaml or base-16. The only difference from decimal and hex is that after 1-9 you start counting with numbers. I'll explain more.
+
+== Understanding hex
+To help explain hex I have included a table below with hex, decimal and binary values. Notice that after 1-9 instead of counting `10`, `11`, `12`, etc.. like decimal hex start using `A`, `B`, `C` and so on to `F`. We don't need to count farther than `F` for IPv6 so if your interested in learning more about hex I encourage you to find another article. I should also point out that the table does a lot of the work for us when converting IPv6 to binary. I'll explain converting hex to binary below but using the table when converting a full IPv6 addresses to binary will save you time instead of finding the value for each hex in each hextect.
+
+[cols="3*"]
+|===
+|Hexadecimal
+|Decimal
+|Binary
+
+|0
+|0
+|0000
+
+
+|1
+|1
+|0001
+
+|2
+|2
+|0010
+
+|3
+|3
+|0011
+
+|4
+|4
+|0100
+
+|5
+|5
+|0101
+
+|6
+|6
+|0110
+
+|7
+|7
+|0111
+
+|8
+|8
+|1000
+
+|9
+|9
+|1001
+
+|A
+|10
+|1010
+
+|B
+|11
+|1011
+
+|C
+|12
+|1100
+
+|D
+|13
+|1101
+
+|E
+|14
+|1110
+
+|F
+|15
+|1111
+
+|===
+
+=== Converting to binary
+If you are wondering how to get the binary value we simply uses the same method for converting IPv4 but only up to 4 bits for each integer/character. I cover this in more detail in my [Converting IPv4 to Binary](http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html) article. Let's make a binary cheat sheet. Below is used for an IPv4 octet:
+```
+ x   x   x   x   x   x   x   x
+--- --- --- --- --- --- --- ---
+2^7 2^6 2^5 2^4 2^3 2^2 2^1 2^0
+```
+
+Since we only need the 2^0 to 2^3 let's remove 2^4 - 2^7:
+```
+ x   x   x   x
+--- --- --- ---
+2^3 2^2 2^1 2^0
+```
+
+If we calculate those values out we get:
+```
+ x   x   x   x 
+--- --- --- ---
+ 8   4   2   1
+```
+
+Now that we have our cheat sheet let's say we want to get the binary value of hex `A`. First `A` is `10` in decimal because after `9` you start counting with letters.
+
+Just like calculating IPv4 we take the largest value from binary bit that can subtracted from `10`, in this case `8` works so:
+```
+  10
+-  8
+-----
+   2
+```
+
+We fill in `1` for the `8` bit and put a `0` for `4` because we can't subtract `4` from `2`:
+```
+ 1   0   x   x 
+--- --- --- ---
+ 8   4   2   1
+```
+
+
+Then repeat for `2` because we can subtract `2` from `2` and still get a positive or zero number:
+```
+   2
+-  2
+-----
+   0
+```
+
+We fill in `1` for the `2` bit and because we are at `0` from doing `2 - 2` any remaining values are `0`:
+```
+ 1   0   1   0 
+--- --- --- ---
+ 8   4   2   1
+```
+
+and we get `1010` for the binary value of `A`.
+
+
+== Converting hex to binary
+Converting hex to binary is the exact same procedure as converting IPv4 to binary and the method shown above. However, instead of 8 binary bits, we are dealing with 16. Four bits for each integers/character and because 4 integers/characters make-up a hextect we have 16 bits total. Here is a breakdown.
+
+If we have an IPv6 address like so:
+```
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+```
+
+Each section separate by a `:` is the equivalent to an octet in IPv4 talk or as we already mentioned it's called a "hextect". Lets solve for `0db8` because it contains a mix of numbers and letters making it good practice. Lets recreate our octet binary cheat sheet but for hextets instead:
+
+```
+ x   x   x   x  |  x   x   x   x  |  x   x   x   x  |  x   x   x   x
+--- --- --- --- | --- --- --- --- | --- --- --- --- | --- --- --- ---
+ 8   4   2   1  |  8   4   2   1  |  8   4   2   1  |  8   4   2   1
+```
+
+I separate each integer/character by a `|`. Here is visual diagram to make it a bit more clear.
+
+```
+                                 0db8
+                                  |
+       0                 d        |        b                 8
+       +-----------------+--------+--------+-----------------+
+       |                 |                 |                 |
+ x   x   x   x  |  x   x   x   x  |  x   x   x   x  |  x   x   x   x
+--- --- --- --- | --- --- --- --- | --- --- --- --- | --- --- --- ---
+ 8   4   2   1  |  8   4   2   1  |  8   4   2   1  |  8   4   2   1
+```
+
+And now we simply convert to binary for each digit or character. If you don't understand refer to the "Converting to binary" section again.
+
+```
+                                 0db8
+                                  |
+       0                 d        |        b                 8
+       +-----------------+--------+--------+-----------------+
+       |                 |                 |                 |
+ 0   0   0   0  |  1   1   0   1  |  1   0   1   1  |  1   0   0   0
+--- --- --- --- | --- --- --- --- | --- --- --- --- | --- --- --- ---
+ 8   4   2   1  |  8   4   2   1  |  8   4   2   1  |  8   4   2   1
+```
+
+
+Now repeat for each hextect! The final outcome would be:
+```
+00100000000000010000110110111000100001011010001100000000000000000000000000000000100010100010111000000011011100000111001100110100
+```
+
+You could also convert to dotted decimal but that's another tutorial:
+```
+32.1.13.184.133.163.0.0.0.0.138.46.3.112.115.52
+```
+
+Obviously this is a bit more intensive then IPv4 but you'll need to learn it regardless. Best of luck converting in the field.
