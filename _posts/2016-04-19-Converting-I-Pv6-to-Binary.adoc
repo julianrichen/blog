@@ -118,7 +118,7 @@ To help explain hex I have included a table below with hex, decimal and binary v
 |===
 
 === Converting to binary
-If you are wondering how to get the binary value we simply uses the same method for converting IPv4 but only up to 4 bits for each integer/character. I cover this in more detail in my [Converting IPv4 to Binary](http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html) article. Let's make a binary cheat sheet. Below is used for an IPv4 octet:
+If you are wondering how to get the binary value we simply uses the same method for converting IPv4 but only up to 4 bits for each integer/character. I cover this in more detail in my http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html[Converting IPv4 to Binary] article. Let's make a binary cheat sheet. Below is used for an IPv4 octet:
 ```
  x   x   x   x   x   x   x   x
 --- --- --- --- --- --- --- ---
