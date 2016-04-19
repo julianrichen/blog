@@ -194,5 +194,6 @@ And we get `198.120.50.6`, easy!
 
 == More
 If you wan to learn about IPv6 and subnetting checkout these blog posts:
+
 * TBA
 * TBA
