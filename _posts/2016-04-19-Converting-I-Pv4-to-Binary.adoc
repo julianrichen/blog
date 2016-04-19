@@ -1,0 +1,198 @@
+= Converting IPv4 to Binary
+:published_at: 2016-04-19
+:hp-tags: Networking, IPv4, Cisco
+
+Being able to convert IPv4 addresses to Binary is an essential skill in Networking. There already exists many tutorials on converting addresses but this was subject that I found either clicked or didn't. This meant reading multiple articles until I found one that explained the topic the way I needed it to. So in this article i'll try my best to explain it the way I understood it, hofully someone finds it useful. Get comfortable with this skill and practice converting quickly, converting IPv4 address to binary is a must when subnetting your network.
+
+== Understanding Octets
+In IPv4 you have have four octets, each octet is separated by a dot (`.`). This format is referred as "dotted-decimal" format. The following is an example of a valid IPv4 address in dotted-decimal.
+```
+198.120.50.6
+```
+
+Remember that IPv4 address can technically go from `0.0.0.0` to `255.255.255.255`, this will come in handy later.
+
+We can break an IPv4 address into our four octets:
+```
+ 198   .   120   .   50    .    6
+-------   -------   -------   -------
+Octet 1   Octet 2   Octet 3   Octet 4
+```
+
+Before we can convert an octet into binary we need to understand Binary. Binary is a "base-2 numeral system", or two to the power of x (`2^x`). Recall that Binary has two states, `1` is considered on, and `0` is considered off.
+
+For each octet starting on the right you raise 2 to the x (`2^x`). The first bit (on the far right) would be 2 to the power of 0 (`2^0`), then 2 to the power of 1 (`2^1`), then 2 to the power of 2 (`2^2`) and so on until you have 2 to the power of 7 (`2^7`).
+
+Lets create a Binary Cheat Sheet:
+```
+ x   x   x   x   x   x   x   x
+--- --- --- --- --- --- --- ---
+2^7 2^6 2^5 2^4 2^3 2^2 2^1 2^0
+```
+
+Which if we calculate those values out we get:
+```
+ x   x   x   x   x   x   x   x 
+--- --- --- --- --- --- --- ---
+128 64  32  16   8   4   2   1
+```
+
+Now let's take an example were ever one of the bits (8 total) are active (or have a `1` value), the following is binary for "255":
+```
+ 1   1   1   1   1   1   1   1 
+--- --- --- --- --- --- --- ---
+128 64  32  16   8   4   2   1
+```
+
+The above binary of `11111111` is 255 because you take the value of each bit with a `1` or an “on” value and add the values together, since `255` contains nothing but `1`'s we have:
+```
+1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 = 255
+```
+
+If you are still confused then lets break it down with another number. Lets try our first octet in the example IPv4 address `198.120.50.6`, which would be `198`.
+
+First lets create a blank binary placeholder, each "X" represents a bit in the octet:
+```
+ x   x   x   x   x   x   x   x  
+--- --- --- --- --- --- --- --- 
+128 64  32  16   8   4   2   1
+```
+
+Second lets take the octet (`198`) and subtract the largest amount from `2^x` power starting from the left side. In this case we can subtract `128` from `198` without getting a negative number.
+```
+  198
+- 128
+-----
+   70
+```
+
+We can now fill in our blank bits with a `1` because it is active.
+```
+ 1   x   x   x   x   x   x   x  
+--- --- --- --- --- --- --- --- 
+128 64  32  16   8   4   2   1
+```
+
+Now take your remainder (`70`) and subtract it by the next largest base-2 power without receiving a negative number. We can do `64`:
+```
+  70
+- 64
+----
+   6
+```
+
+Since 64 was subtracted we fill in its bit.
+```
+ 1   1   x   x   x   x   x   x  
+--- --- --- --- --- --- --- --- 
+128 64  32  16   8   4   2   1
+```
+
+Now we have `6`, we can not subtract `32`, `16` or `8` from `6` so we fill in those bits with a zero.
+```
+ 1   1   0   0   0   x   x   x  
+--- --- --- --- --- --- --- --- 
+128 64  32  16   8   4   2   1
+```
+
+
+The next number we can subtract by is `4`.
+```
+  6
+- 4
+---
+  2
+```
+
+We can fill in that bit with a one:
+```
+ 1   1   0   0   0   1   x   x  
+--- --- --- --- --- --- --- --- 
+128 64  32  16   8   4   2   1
+```
+
+Finally we have `2` which can be subtracted by `2` for a value of `0`.
+```
+  2
+- 2
+---
+  0
+```
+
+We can fill in that bit with a one and fill in all remanding bits with zeros because we have no more number to subtract by.
+```
+ 1   1   0   0   0   1   1   0  
+--- --- --- --- --- --- --- --- 
+128 64  32  16   8   4   2   1
+```
+
+That's it! Our binary number for `198` is `11000110`. If we follow the same procedure as above can find the other 3 octets, they are:
+```
+198 = 11000110
+120 = 01111000
+50  = 00110010
+6   = 00000110
+```
+
+This gives us an IPv4 address of `11000110.01111000.00110010.00000110` in binary, imagine remembering those numbers instead of `198.120.50.6`!
+
+== Converting Binary to dotted decimal
+
+Converting Binary back to a valid IPv4 address is as easy as reversing the steps above. Remember each octet is 8 bits, and we once again use our base-2 system.
+```
+1 1 0 0 0 1 1 0 . 0 1 1 1 1 0 0 0 . 0 0 1 1 0 0 1 0 . 0 0 0 0 0 1 1 0
+- - - - - - - -   - - - - - - - -   - - - - - - - -   - - - - - - - -
+| | | | | | | |   | | | | | | | |   | | | | | | | |   | | | | | | | |   
+| | | | | | | 1   | | | | | | | 1   | | | | | | | 1   | | | | | | | 1   
+| | | | | | 2     | | | | | | 2     | | | | | | 2     | | | | | | 2     
+| | | | | 4       | | | | | 4       | | | | | 4       | | | | | 4       
+| | | | 8         | | | | 8         | | | | 8         | | | | 8         
+| | | 16          | | | 16          | | | 16          | | | 16          
+| | 32            | | 32            | | 32            | | 32            
+| 64              | 64              | 64              | 64              
+128               128               128               128               
+```
+
+Single out the ones:
+```
+1 1 0 0 0 1 1 0 . 0 1 1 1 1 0 0 0 . 0 0 1 1 0 0 1 0 . 0 0 0 0 0 1 1 0
+- - - - - - - -   - - - - - - - -   - - - - - - - -   - - - - - - - -
+| |       | |       | | | |             | |     |               | |     
+| |       | |       | | | |             | |     |               | |     
+| |       | 2       | | | |             | |     2               | 2     
+| |       4         | | | |             | |                     4       
+| |                 | | | 8             | |                             
+| |                 | | 16              | 16                            
+| |                 | 32                32                              
+| 64                64                                                  
+128                                                                     
+```
+
+Add up all the bits with a `1` as the value.
+
+Octet 1
+```
+128 + 64 + 4 + 2 = 198
+```
+
+Octet 2
+```
+64 + 32 + 16 + 8 = 120
+```
+
+Octet 3
+```
+32 + 16 + 2 = 50
+```
+
+Octet 4
+```
+4 + 2 = 6
+```
+
+And we get `198.120.50.6`, easy!
+
+== More
+If you wan to learn about IPv6 and subnetting checkout these blog posts:
+* TBA
+* TBA
