@@ -2,7 +2,7 @@
 :published_at: 2016-04-19
 :hp-tags: Networking, IPv4, Cisco
 
-Being able to convert IPv4 addresses to Binary is an essential skill in Networking. There already exists many tutorials on converting addresses but this was subject that I found either clicked or didn't. This meant reading multiple articles until I found one that explained the topic the way I needed it to. So in this article i'll try my best to explain it the way I understood it, hofully someone finds it useful. Get comfortable with this skill and practice converting quickly, converting IPv4 address to binary is a must when subnetting your network.
+Being able to convert IPv4 addresses to Binary is an essential skill in Networking. There already exists many tutorials on converting addresses but this was subject that I found either clicked or didn't. This meant reading multiple articles until I found one that explained the topic the way I needed it to. So in this article i'll try my best to explain it the way I understood it, hopefully someone finds it useful. Get comfortable with this skill and practice converting quickly, converting IPv4 address to binary is a must when subnetting your network.
 
 == Understanding Octets
 In IPv4 you have have four octets, each octet is separated by a dot (`.`). This format is referred as "dotted-decimal" format. The following is an example of a valid IPv4 address in dotted-decimal.
@@ -44,7 +44,7 @@ Now let's take an example were ever one of the bits (8 total) are active (or hav
 128 64  32  16   8   4   2   1
 ```
 
-The above binary of `11111111` is 255 because you take the value of each bit with a `1` or an “on” value and add the values together, since `255` contains nothing but `1`'s we have:
+The above binary of `11111111` is 255 because you take the value of each bit with a `1` or an on value and add the values together, since `255` contains nothing but `1`'s we have:
 ```
 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 = 255
 ```
@@ -193,7 +193,7 @@ Octet 4
 And we get `198.120.50.6`, easy!
 
 == More
-If you wan to learn about IPv6 and subnetting checkout these blog posts:
+If you wan to learn about IPv6 and subnetting checkout these articles:
 
 * TBA
 * TBA
