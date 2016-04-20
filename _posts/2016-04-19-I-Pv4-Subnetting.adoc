@@ -1,44 +1,50 @@
 = IPv4 Subnetting
 :published_at: 2016-04-19
-:hp-tags: Networking, IPv4, Cisco
+:hp-tags: Networking, Subnetting, IPv4, Cisco
 
-Building off the last two articles I wrote about http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html[Converting IPv4 to Binary] and http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html[IPv6] I wanted to break down subnetting the best way I learned it. This article is specifically about IPv4 subnetting because I think you need to to start with a basic understanding of subnetting before moving to IPv6 subnetting or super subnetting. I'll assume if you reading this you at least understand why we subnet and how to convert IPv4 to binary. If not you might want to stop here and learn that first.
+Building off the last two articles I wrote about http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html[Converting IPv4 to Binary] and http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html[IPv6] I wanted to break down subnetting the best way I learned it. This article is specifically about IPv4 subnetting because I think you need to to start with a basic understanding of subnetting before moving to IPv6 subnetting, VLSM or super subnetting. I'll assume if you are reading this you at least understand why we subnet and how to convert IPv4 to binary. If not you might want to stop here and learn that first.
 
 == Classes
-The first major thing you should lean about subnetting is classes. Classes are used to seperate IP addresses for different reasons. They were originally created in the 1970's by the IEEE. Here is the basic info:
+The first major thing you should lean about subnetting is classes. Classes are used to separate IP addresses for different reasons. They were originally created in the 1970's by the IEEE. Here is the basic info:
 
-[cols="3*"]
+[cols="4*"]
 |===
 |Class
 |First Octet Range
 |Reason
+|Example
 
 |A
-|000 - 126
+|0 - 126
 |Designed for large-sized networks
+|50.123.12.4
 
 |B
 |128 - 191
 |Designed for medium-sized networks.
+|151.123.51.3
 
 |C
 |192 - 223
 |Designed for small-sized networks.
+|195.123.41.1
 
 |D
 |224 - 239
 |Research
+|227.123.1.41
 
 |E
 |240 - 250
 |Research
+|245.12.51.51
 
 |===
 
 You probably noticed that 127 was skipped, this was not a mistake. This class, more commonly called localhost, is an entire ip address range wasted for "localhost" reasons. There is a reason your computer can ping it's self with `127.0.0.1`. Keep theses classes in mind as we continue.
 
 === Network and Host ID
-While the class might seem like a rather vague topic at the moment they also have another role. There an easy way to express what a network looks like in terms of network and host id. When you subnet a network you have something called a network id and a host id. The Network id is the common network, it's the part of the IP address that all host will share between host devices. The host id is the identifier for each device on the network. Your ip address will look like this.
+While the class might seem like a rather vague topic at the moment they also have another role. There an easy way to express what a network looks like in terms of network and host id. When you subnet a network you have something called a network id and a host ids. The network id is the common network, it's the part of the IP address that all host will share between host devices. The host id is the identifier for each device on the network. Your ip address will look like this for each class.
 
 [cols="2*"]
 |===
@@ -71,25 +77,29 @@ Lets try and understand this a bit more and try an example, take the ip `192.168
     +---------- Network ID
 ```
 
-This IP address might seem similar because it's the internal IP most computers get when using consumer grade routers (at least on Linksys routers). Since your home network is considered a small-sized network it makes sense this is a Class C network. The `192.168.1` part is your network and the `101` part is your host id. You could also have `192.168.1.102` assigned and it would be the next device connected to your network. On another note, chance are if you visit `192.168.1.1` you actually connect to your router because the first host of the network is generally the router of a Class C. While you can assign the router to be the last ip address/host id in the subnet or any ip for that matter it makes sense to place it at the beginning of the subnet. Same goes for routers, switches, servers, printers or any devices that generally have static ip address. This makes management easier.
-
+This IP address's network id might seem similar because it's the internal IP most computers get when using consumer grade routers (at least on Linksys routers). Since your home network is considered a small-sized network it makes sense this is a Class C network. The `192.168.1` part is your network and the `101` part is your host id. You could also have `192.168.1.102` assigned and it would be the next device connected to your network. On another note, chance are if you visit `192.168.1.1` you actually connect to your router because the first host of the network is generally the router of a Class C. While you can assign the router to be the last ip address/host id in the subnet or any ip for that matter it makes sense to place it at the beginning of the subnet. Same goes for routers, switches, servers, printers or any devices that generally have static ip address. This makes management easier.
 
 If you still don't understand network and host id's then let's relate it to something in the real world, house address. Say you lived on "Magnolia Street", this would be the network id. Each house has a unique number for that street. So you could live at "Magnolia Street 123" while you neighbor lives at "Magnolia Street 141". The `123` and `141` are the host ids.
 
 == Subnet Mask
 A subnet mask is a way to show the usable hosts on a subnet. You might see a a subnet represented in multiple ways:
+
+Decimal
 ```
-# Decimal
 255.255.255.0
+```
 
-# Slash
+Slash
+```
 /24
+```
 
-#Binary
+Binary
+```
 11111111.11111111.11111111.00000000
 ```
 
-The decimal and slash notations are the most common, in fact when you get to IPv6 slash is the only way to represent subnets. For this reason I generally prefer the slash method because its faster to write, easy to convert out of and scales well into IPv6. But the question remains, how do I use a mask!?!
+The decimal and slash notations are the most common, in fact when you get to IPv6 slash is the only way to represent subnets. For this reason I generally prefer the slash method because its faster to write, easy to convert and scales well into IPv6. But the question remains, how do I use a mask!?!
 
 Lets create a binary cheat sheet to prove a point.
 ```
@@ -107,11 +117,11 @@ When you fully utilize an octet you get a value of `255`:
 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255
 ```
 
-What this means is `255` is like saying the entire part of that octet is used. If you had the ip address `195.151.34.0` with a `/24` or `255.255.255.0` mask you are saying is for the first three octets all the IPs are used, notice the `255`*. The fourth octet on the other hand is `.0`, which means you can assign all the hosts of that octet. So I could theoretically assign `195.151.34.1`, `195.151.34.2`, all the way to , `195.151.34.255` to some devices connected to the network.
+When you have `255` it's like saying the entire part of that octet is used. Lets take an ip address `195.151.34.0` with a `/24` or `255.255.255.0` mask. The `255` for the first three octets of the IP are considered used because `255` is the max bits that can be active in an octet. The fourth octet on the other hand is `.0`. This means you can assign all the hosts of that octet because a `0` in an octet is the same as say all the bits are inactive. So I could theoretically assign `195.151.34.1`, `195.151.34.2` all the way to `195.151.34.255` to the devices connected to the network.
 
-I put an asterisk on `255` because a `/24` does not really give `255` hosts. It's actually `256` ip address and `254` usable. This is because you can't assign `.0` on an ip address and you can't really assign `.255` because its the broadcast addresses. Your usable range of IPs on a `/24` is `.1` to `.254`. The same goes for other mask, you can't assign the first or last host id of an address. Keep this in mind when creating your subnets, you'll see why later on.
+Now something to note about the range of a mask. If you have a `/24` (`255.255.255.0`) mask you don't actually have `255` hosts. It's actually `256` ip address and `254` usable. First the total hosts is 256 because you include the .0 and .255 in the count. However, you can't assign `.0` on an ip address and you can't really assign `.255` because its the broadcast addresses. Your usable range of IPs on a `/24` is `.1` to `.254`. The same goes for other mask, you can't assign the first or last host id of an address. So when you calulate a mask simply remove 2 from the total to get the total usable hosts. Keep this in mind when creating your subnets, you'll see why later on.
 
-What all this means is mask help to partition our network.
+In short mask help to partition our network.
 
 Here is a table to help you with subnetting:
 [cols="4*"]
@@ -201,7 +211,7 @@ Here is a table to help you with subnetting:
 Unless you are working at enterprise level chances are you want do anything below `/16`.
 
 == Number of hosts
-While the above table is handy to have when you are subnetting sometimes you don't have access to it. For that reason it's important to know how to find the number of hosts in a subet.
+While the above table is handy to have when you are subnetting sometimes you don't have access to it. For that reason it's important to know how to find the number of hosts in a subnet.
 
 It's as easy as IPv4 to binary conversion, everything becomes binary at some point!
 ```
@@ -211,13 +221,11 @@ It's as easy as IPv4 to binary conversion, everything becomes binary at some poi
 /24 /25 /26 /27 /28 /29 /30  0
 ```
 
-
 For each subnet you simply add the number of bits (or in this case hosts) from the right, then you add one host bit because you need to account for the host bit with the `/xx` in front of it (ie. `195.151.34.50/24`; you need to include the `.50`). Then minus 2 because you can't use the first and last host in a subnet.
 
-
-So if I have a `/27` we add:
+So if I have a `/27` we add (using the cheat-sheet above):
 ```
-/27 = 1 + 2 + 4 + 8 + 16 = 31 + 1 = 32 - 2 = 30
+/27 = 1 + 2 + 4 + 8 + 16 = 31 + 1 = 32 - 2 = 30 usable hosts
       \________________/   \___/    \____/
                |             |         |
                |             |         +- -2 because first+last are not usable
@@ -227,7 +235,7 @@ So if I have a `/27` we add:
 
 Or how about `/29`:
 ```
-/29 = 1 + 2 + 4 = 7 + 1 = 8 - 2 = 6
+/29 = 1 + 2 + 4 = 7 + 1 = 8 - 2 = 6 usable hosts
       \_______/   \___/   \___/
           |         |       |
           |         |       +------------ -2 because first+last are not usable
@@ -238,7 +246,7 @@ Or how about `/29`:
 Now lets actually subnet.
 
 == Subnetting
-Now lets actually subnet. Subnetting is creating logical divisions of a network. When you subnet you want to break your network into smaller networks. Lets revolve around the idea that we work at a school. In the school multiple computer labs exists. Theses labs can be different sizes ranging from 10 computers to 30. Our goal today is to create subnets for the following labs on the ip address `195.151.34.0`. The thing about subnetting though is once you select a subnet size every subnet will be the same size. meaning we need to choose a subnet large enough for the largest lab. This can be overcome with Variable Length Subnet Masking but that's for an article.
+In short subnetting is creating logical divisions of a network. When you subnet you want to break your network into smaller networks. Lets revolve around the idea that we work at a school. In the school multiple computer labs exists. Theses labs can be different sizes ranging from 10 computers to 30. Our goal today is to create subnets for those labs on the ip address `195.151.34.0`. The thing about subnetting though is once you select a subnet size every subnet will be the same size on the network id. This means we need to choose a subnet large enough for the largest lab but still small enough not to waste IPs. This can be overcome with Variable Length Subnet Masking but that's for another article.
 
 So lets say this is what we want:
 ```
@@ -248,15 +256,7 @@ Lab 3: 30 computers
 Lab 4: 18 computers
 ```
 
-I'll give you the answers/subnets now and show you how we worked towards them.
-```
-Lab 1: 195.151.34.0/27
-Lab 2: 195.151.34.32/27
-Lab 3: 195.151.34.64/27
-Lab 4: 195.151.34.96/27
-```
-
-First we need to find a subnet that can support 30 hosts, the largest computer lab. `/27` can do that because `/27` has 32 hosts and 30 usable hosts. Remember they need to be usable! If we need 32 host a `/27` would not work because it only has 30 usable ips. So our first subnet is `195.151.34.0/27` with a range of:
+First we need to find a subnet that can support 30 hosts, the largest computer lab. `/27` can do that because `/27` has 32 hosts and 30 usable hosts. Remember we need usable hosts! If we need 32 host a `/27` would not work because it only has 30 usable IPs. So our first subnet is `195.151.34.0/27` with a range of:
 ```
 195.151.34.0 - 195.151.34.31
 ```
@@ -275,6 +275,16 @@ Then add 32 to 64 and start are new range of `/27`, `195.151.34.96/27`:
 ```
 195.151.34.96 - 195.151.34.127
 ```
+
+So to recap our labs look like this:
+```
+Lab 1: 195.151.34.0/27
+Lab 2: 195.151.34.32/27
+Lab 3: 195.151.34.64/27
+Lab 4: 195.151.34.96/27
+```
+
+
 
 And done, you just subnetted. As you can probably see this is wasting a lot of ips for the smaller subnets like Lab 1 but it can't be helped. That is why Variable Length Subnet Masking (VLSM) was created. VLSM is a much more efficient way to subnet because you can vary the size of the subnets selecting minimal size mask you need for each subnet. Nearly everyone uses VLSM at every level of networking.
 
