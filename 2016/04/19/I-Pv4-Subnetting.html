@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>IPv4 Subnetting</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//blog.richen.io/themes/Roon/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic|Open+Sans:400italic,700italic,700,400">
+    <link rel="stylesheet" type="text/css" href="//blog.richen.io/themes/Roon/assets/css/screen.css?v=1.0.0" />
+
+    <link rel="canonical" href="http://blog.richen.io/2016/04/19/I-Pv4-Subnetting.html" />
+    
+    <meta property="og:site_name" content="Julian Richen" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="IPv4 Subnetting" />
+    <meta property="og:description" content="Building off the last two articles I wrote about Converting IPv4 to Binary and IPv6 I wanted to break down subnetting the best way I learned it. This article is specifically about IPv4 subnetting because I think you need to..." />
+    <meta property="og:url" content="http://blog.richen.io/2016/04/19/I-Pv4-Subnetting.html" />
+    <meta property="article:published_time" content="2016-04-19T04:00:00.000Z" />
+    <meta property="article:modified_time" content="2016-04-20T02:22:38.715Z" />
+    <meta property="article:tag" content="Networking" />
+    <meta property="article:tag" content="Subnetting" />
+    <meta property="article:tag" content="IPv4" />
+    <meta property="article:tag" content="Cisco" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="IPv4 Subnetting" />
+    <meta name="twitter:description" content="Building off the last two articles I wrote about Converting IPv4 to Binary and IPv6 I wanted to break down subnetting the best way I learned it. This article is specifically about IPv4 subnetting because I think you need to..." />
+    <meta name="twitter:url" content="http://blog.richen.io/2016/04/19/I-Pv4-Subnetting.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Julian Richen",
+    "author": {
+        "@type": "Person",
+        "name": "Julian Richen",
+        "image": "https://avatars.githubusercontent.com/u/58045?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": "http://richen.io"
+    },
+    "headline": "IPv4 Subnetting",
+    "url": "http://blog.richen.io/2016/04/19/I-Pv4-Subnetting.html",
+    "datePublished": "2016-04-19T04:00:00.000Z",
+    "dateModified": "2016-04-20T02:22:38.715Z",
+    "keywords": "Networking,  Subnetting,  IPv4,  Cisco",
+    "description": "Building off the last two articles I wrote about Converting IPv4 to Binary and IPv6 I wanted to break down subnetting the best way I learned it. This article is specifically about IPv4 subnetting because I think you need to..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="Julian Richen" href="http://blog.richen.io/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template tag-Networking tag-Subnetting tag-I-Pv4 tag-Cisco  noimage">
+
+    
+
+
+    <article role="main" class="">
+        <header>
+            <a href="http://blog.richen.io" id="home_link">«</a>
+            <div class="meta"><time datetime="2016-04-19"><a href="/2016/04/19/I-Pv4-Subnetting.html">April 19, 2016</a></time> <span class="count" id="js-reading-time"></span></div>
+            <h1>IPv4 Subnetting</h1>
+        </header>
+
+        <div class="text" id="js-post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Building off the last two articles I wrote about <a href="http://blog.richen.io/2016/04/19/Converting-I-Pv4-to-Binary.html">Converting IPv4 to Binary</a> and <a href="http://blog.richen.io/2016/04/19/Converting-I-Pv6-to-Binary.html">IPv6</a> I wanted to break down subnetting the best way I learned it. This article is specifically about IPv4 subnetting because I think you need to to start with a basic understanding of subnetting before moving to IPv6 subnetting, VLSM or super subnetting. I&#8217;ll assume if you are reading this you at least understand why we subnet and how to convert IPv4 to binary. If not you might want to stop here and learn that first.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_classes">Classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The first major thing you should lean about subnetting is classes. Classes are used to separate IP addresses for different reasons. They were originally created in the 1970&#8217;s by the IEEE. Here is the basic info:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Class</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">First Octet Range</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reason</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Example</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 - 126</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Designed for large-sized networks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50.123.12.4</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">128 - 191</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Designed for medium-sized networks.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">151.123.51.3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">192 - 223</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Designed for small-sized networks.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">195.123.41.1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">224 - 239</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Research</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">227.123.1.41</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">240 - 250</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Research</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">245.12.51.51</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>You probably noticed that 127 was skipped, this was not a mistake. This class, more commonly called localhost, is an entire ip address range wasted for "localhost" reasons. There is a reason your computer can ping it&#8217;s self with <code>127.0.0.1</code>. Keep theses classes in mind as we continue.</p>
+</div>
+<div class="sect2">
+<h3 id="_network_and_host_id">Network and Host ID</h3>
+<div class="paragraph">
+<p>While the class might seem like a rather vague topic at the moment they also have another role. There an easy way to express what a network looks like in terms of network and host id. When you subnet a network you have something called a network id and a host ids. The network id is the common network, it&#8217;s the part of the IP address that all host will share between host devices. The host id is the identifier for each device on the network. Your ip address will look like this for each class.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Class</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Address Schema</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[network].[host].[host].[host]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[network].[network].[host].[host]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[network].[network].[network].[host]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Undefined</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Undefined</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Lets try and understand this a bit more and try an example, take the ip <code>192.168.1.101</code>. This is a Class C network and we can break its network and host id down like so.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>192.168.1.101
+--------- ---
+    |      +--- Host ID
+    +---------- Network ID</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This IP address&#8217;s network id might seem similar because it&#8217;s the internal IP most computers get when using consumer grade routers (at least on Linksys routers). Since your home network is considered a small-sized network it makes sense this is a Class C network. The <code>192.168.1</code> part is your network and the <code>101</code> part is your host id. You could also have <code>192.168.1.102</code> assigned and it would be the next device connected to your network. On another note, chance are if you visit <code>192.168.1.1</code> you actually connect to your router because the first host of the network is generally the router of a Class C. While you can assign the router to be the last ip address/host id in the subnet or any ip for that matter it makes sense to place it at the beginning of the subnet. Same goes for routers, switches, servers, printers or any devices that generally have static ip address. This makes management easier.</p>
+</div>
+<div class="paragraph">
+<p>If you still don&#8217;t understand network and host id&#8217;s then let&#8217;s relate it to something in the real world, house address. Say you lived on "Magnolia Street", this would be the network id. Each house has a unique number for that street. So you could live at "Magnolia Street 123" while you neighbor lives at "Magnolia Street 141". The <code>123</code> and <code>141</code> are the host ids.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_subnet_mask">Subnet Mask</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A subnet mask is a way to show the usable hosts on a subnet. You might see a a subnet represented in multiple ways:</p>
+</div>
+<div class="paragraph">
+<p>Decimal</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>255.255.255.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Slash</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>/24</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Binary</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>11111111.11111111.11111111.00000000</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The decimal and slash notations are the most common, in fact when you get to IPv6 slash is the only way to represent subnets. For this reason I generally prefer the slash method because its faster to write, easy to convert and scales well into IPv6. But the question remains, how do I use a mask!?!</p>
+</div>
+<div class="paragraph">
+<p>Lets create a binary cheat sheet to prove a point.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> x   x   x   x   x   x   x   x
+--- --- --- --- --- --- --- ---
+128 64  32  16   8   4   2   1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you fully utilize an octet you get a value of <code>255</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> 1   1   1   1   1   1   1   1
+--- --- --- --- --- --- --- ---
+128 64  32  16   8   4   2   1
+
+128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you have <code>255</code> it&#8217;s like saying the entire part of that octet is used. Lets take an ip address <code>195.151.34.0</code> with a <code>/24</code> or <code>255.255.255.0</code> mask. The <code>255</code> for the first three octets of the IP are considered used because <code>255</code> is the max bits that can be active in an octet. The fourth octet on the other hand is <code>.0</code>. This means you can assign all the hosts of that octet because a <code>0</code> in an octet is the same as say all the bits are inactive. So I could theoretically assign <code>195.151.34.1</code>, <code>195.151.34.2</code> all the way to <code>195.151.34.255</code> to the devices connected to the network.</p>
+</div>
+<div class="paragraph">
+<p>Now something to note about the range of a mask. If you have a <code>/24</code> (<code>255.255.255.0</code>) mask you don&#8217;t actually have <code>255</code> hosts. It&#8217;s actually <code>256</code> ip address and <code>254</code> usable. First the total hosts is 256 because you include the .0 and .255 in the count. However, you can&#8217;t assign <code>.0</code> on an ip address and you can&#8217;t really assign <code>.255</code> because its the broadcast addresses. Your usable range of IPs on a <code>/24</code> is <code>.1</code> to <code>.254</code>. The same goes for other mask, you can&#8217;t assign the first or last host id of an address. So when you calulate a mask simply remove 2 from the total to get the total usable hosts. Keep this in mind when creating your subnets, you&#8217;ll see why later on.</p>
+</div>
+<div class="paragraph">
+<p>In short mask help to partition our network.</p>
+</div>
+<div class="paragraph">
+<p>Here is a table to help you with subnetting:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mask</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hosts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Netmask</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/30</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.252</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/29</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.248</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/28</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.240</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/27</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.224</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/26</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">64</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">62</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.192</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/25</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">128</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">126</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.128</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/24</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">256</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">254</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.255.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/23</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">510</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.254.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/22</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1024</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1022</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.252.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/21</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2048</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2046</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.248.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4096</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4094</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.240.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/19</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8192</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8190</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.224.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/18</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16384</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16382</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.192.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/17</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32768</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32766</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.128.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/16</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">65536</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">65534</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">255.255.0.0</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Unless you are working at enterprise level chances are you want do anything below <code>/16</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_number_of_hosts">Number of hosts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While the above table is handy to have when you are subnetting sometimes you don&#8217;t have access to it. For that reason it&#8217;s important to know how to find the number of hosts in a subnet.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s as easy as IPv4 to binary conversion, everything becomes binary at some point!</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code> x   x   x   x   x   x   x   x
+--- --- --- --- --- --- --- ---
+128 64  32  16   8   4   2   1
+/24 /25 /26 /27 /28 /29 /30  0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For each subnet you simply add the number of bits (or in this case hosts) from the right, then you add one host bit because you need to account for the host bit with the <code>/xx</code> in front of it (ie. <code>195.151.34.50/24</code>; you need to include the <code>.50</code>). Then minus 2 because you can&#8217;t use the first and last host in a subnet.</p>
+</div>
+<div class="paragraph">
+<p>So if I have a <code>/27</code> we add (using the cheat-sheet above):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>/27 = 1 + 2 + 4 + 8 + 16 = 31 + 1 = 32 - 2 = 30 usable hosts
+      \________________/   \___/    \____/
+               |             |         |
+               |             |         +- -2 because first+last are not usable
+               |             +----------- +1 for the current ip
+               +------------------------- Add binary bits</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or how about <code>/29</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>/29 = 1 + 2 + 4 = 7 + 1 = 8 - 2 = 6 usable hosts
+      \_______/   \___/   \___/
+          |         |       |
+          |         |       +------------ -2 because first+last are not usable
+          |         +-------------------- +1 for the current ip
+          +------------------------------ Add binary bits</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now lets actually subnet.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_subnetting">Subnetting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In short subnetting is creating logical divisions of a network. When you subnet you want to break your network into smaller networks. Lets revolve around the idea that we work at a school. In the school multiple computer labs exists. Theses labs can be different sizes ranging from 10 computers to 30. Our goal today is to create subnets for those labs on the ip address <code>195.151.34.0</code>. The thing about subnetting though is once you select a subnet size every subnet will be the same size on the network id. This means we need to choose a subnet large enough for the largest lab but still small enough not to waste IPs. This can be overcome with Variable Length Subnet Masking but that&#8217;s for another article.</p>
+</div>
+<div class="paragraph">
+<p>So lets say this is what we want:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Lab 1: 10 computers
+Lab 2: 25 computers
+Lab 3: 30 computers
+Lab 4: 18 computers</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>First we need to find a subnet that can support 30 hosts, the largest computer lab. <code>/27</code> can do that because <code>/27</code> has 32 hosts and 30 usable hosts. Remember we need usable hosts! If we need 32 host a <code>/27</code> would not work because it only has 30 usable IPs. So our first subnet is <code>195.151.34.0/27</code> with a range of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>195.151.34.0 - 195.151.34.31</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then add <code>32</code> to <code>.0</code> and start our new range of <code>/27</code>, <code>195.151.34.32/27</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>195.151.34.32 - 195.151.34.63</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then add <code>32</code> to <code>.32</code> and start our new range of <code>/27</code>, <code>195.151.34.64/27</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>195.151.34.64 - 195.151.34.95</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then add <code>32</code> to <code>.64</code> and start our new range of <code>/27</code>, <code>195.151.34.96/27</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>195.151.34.96 - 195.151.34.127</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So to recap our labs look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Lab 1: 195.151.34.0/27
+Lab 2: 195.151.34.32/27
+Lab 3: 195.151.34.64/27
+Lab 4: 195.151.34.96/27</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All done, you just subnetted! As you can probably see this is wasting a lot of IPs for the smaller subnets like Lab 1 but it can&#8217;t be helped. That is why Variable Length Subnet Masking (VLSM) was created. VLSM is a much more efficient way to subnet because you can vary the size of the subnets selecting the minimal size mask you need for each subnet. Nearly everyone uses VLSM at every level of networking.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_more">More</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>That&#8217;s all I have for simple IPv4 subnetting. You should now look into Variable Length Subnet Masking (VLSM) and super subnetting once you feel comfortable on this topic.</p>
+</div>
+</div>
+</div>
+        </div>
+
+        <menu>
+            <a href="" id="btn_share" class="btn" title="Share">
+                <span aria-hidden="true" data-icon="S"></span>
+                <strong>Share</strong>
+            </a>
+            <a href="http://twitter.com/share?text=IPv4%20Subnetting&url=http://blog.richen.io/2016/04/19/I-Pv4-Subnetting.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;" id="btn_comment" class="btn" target="_blank">
+                <span aria-hidden="true" data-icon="C"></span> Comment on Twitter
+            </a>
+        </menu>
+
+
+        <footer class="post-footer" role="contentinfo">
+
+            <div class="vcard">
+                <!-- <a href="http://blog.richen.io/rss" id="btn_feed" class="btn" title="Feed" target="_blank">
+                    <span aria-hidden="true" data-icon=")"></span>
+                    <strong>Feed</strong>
+                </a> -->
+
+                <a href="" class="photo">
+                    <span style="background-image: url('https://avatars.githubusercontent.com/u/58045?v=3');">
+                        <img src="https://avatars.githubusercontent.com/u/58045?v=3" alt="Julian Richen">
+                    </span>
+                </a>
+
+                <div class="details">
+                    <h4><a href="" class="url n">Julian Richen</a></h4>
+                    
+                    <a href="http://richen.io" class="js-remove-domain-schema">http://richen.io</a>
+                </div>
+            </div>
+
+            <div id="user_bio">
+                <div class="inner">
+                    
+                </div>
+            </div>
+
+        </footer>
+
+
+
+
+    </article>
+
+    <div id="share_modal">
+        <div class="wrap">
+            <div class="inner">
+                <header>
+                    Share
+                    <a href="" class="close" title="Close">&times;</a>
+                </header>
+
+                <div class="roon-share-links">
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-dnt="true">Tweet</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+                    <div id="fb-elems">
+                        <div id="fb-root"></div>
+                        <script>(function(d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=463438580397968";
+                        fjs.parentNode.insertBefore(js, fjs);
+                        }(document, 'script', 'facebook-jssdk'));</script>
+                        <div class="fb-like" data-send="false" data-layout="button_count" data-width="110" data-show-faces="false" data-font="arial"></div>
+                    </div>
+
+                    <div id="pinit-btn">
+                        <a href="//pinterest.com/pin/create/button/?url=http://blog.richen.io/2016/04/19/I-Pv4-Subnetting.html&amp;description=IPv4%20Subnetting-Julian%20Richen " data-pin-do="buttonPin" data-pin-config="beside"><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png"></a>
+                        <script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+        <a href="http://blog.richen.io" id="blog_badge">
+            <span style="background-image: url('http://blog.richen.io/images/icon-v3-500x500.png');">Julian Richen</span>
+        </a>
+
+
+    <script>
+
+            function get_text(el) {
+                ret = "";
+                var length = el.childNodes.length;
+                for(var i = 0; i < length; i++) {
+                    var node = el.childNodes[i];
+                    if(node.nodeType != 8) {
+                        ret += node.nodeType != 1 ? node.nodeValue : get_text(node);
+                    }
+                }
+                return ret;
+            }
+            function reading_time () {
+                var post_content = document.getElementById('js-post-content');
+                if (post_content) {
+                    var words = get_text(post_content),
+                        count = words.split(/\s+/).length,
+                        read_time = Math.ceil((count / 150)),
+                        read_time_node = document.createTextNode(read_time + ' min read');
+                    document.getElementById('js-reading-time').appendChild(read_time_node);
+                }
+            }
+
+        function no_schema_links () {
+            var links = document.querySelectorAll('.js-remove-domain-schema');
+            if (links) {
+                for (i = 0; i < links.length; ++i) {
+                    var link = links[i],
+                        text = link.innerHTML,
+                        no_schema = text.replace(/.*?:\/\//g, "");
+                    link.innerHTML = no_schema;
+                }
+            }
+        }
+
+        window.onload = function () {
+            no_schema_links();
+
+            reading_time();
+        }
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+        <script>
+            $(function(){
+                var share_modal = $("#share_modal"),
+                    update_social_links = true;
+
+                $("#btn_share").click(function(){
+                    var that = $(this);
+                    share_modal.fadeIn(200);
+                    return false;
+                });
+
+                share_modal.click(function(e){
+                    if (e.target.className == "wrap" || e.target.id == "share_modal") {
+                        share_modal.fadeOut(200);
+                    }
+                    return false;
+                });
+
+                share_modal.find("div.inner > header > a.close").click(function(){
+                    share_modal.fadeOut(200);
+                    return false;
+                });
+            });
+        </script>
+
+
+
+</body>
+</html>
