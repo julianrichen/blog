@@ -261,17 +261,17 @@ First we need to find a subnet that can support 30 hosts, the largest computer l
 195.151.34.0 - 195.151.34.31
 ```
 
-When then add 32 to 0 and start are new range of `/27`, `195.151.34.32/27`:
+Then add `32` to `.0` and start our new range of `/27`, `195.151.34.32/27`:
 ```
 195.151.34.32 - 195.151.34.63
 ```
 
-Then add 32 to 32 and start are new range of `/27`, `195.151.34.64/27`:
+Then add `32` to `.32` and start our new range of `/27`, `195.151.34.64/27`:
 ```
 195.151.34.64 - 195.151.34.95
 ```
 
-Then add 32 to 64 and start are new range of `/27`, `195.151.34.96/27`:
+Then add `32` to `.64` and start our new range of `/27`, `195.151.34.96/27`:
 ```
 195.151.34.96 - 195.151.34.127
 ```
@@ -285,8 +285,7 @@ Lab 4: 195.151.34.96/27
 ```
 
 
-
-And done, you just subnetted. As you can probably see this is wasting a lot of ips for the smaller subnets like Lab 1 but it can't be helped. That is why Variable Length Subnet Masking (VLSM) was created. VLSM is a much more efficient way to subnet because you can vary the size of the subnets selecting minimal size mask you need for each subnet. Nearly everyone uses VLSM at every level of networking.
+All done, you just subnetted! As you can probably see this is wasting a lot of IPs for the smaller subnets like Lab 1 but it can't be helped. That is why Variable Length Subnet Masking (VLSM) was created. VLSM is a much more efficient way to subnet because you can vary the size of the subnets selecting the minimal size mask you need for each subnet. Nearly everyone uses VLSM at every level of networking.
 
 == More
-You should now look into Variable Length Subnet Masking (VLSM) and super subnetting once you feel comfortable on this topic.
+That's all I have for simple IPv4 subnetting. You should now look into Variable Length Subnet Masking (VLSM) and super subnetting once you feel comfortable on this topic.
